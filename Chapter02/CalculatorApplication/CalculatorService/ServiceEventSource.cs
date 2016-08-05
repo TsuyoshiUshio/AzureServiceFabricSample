@@ -7,9 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Services.Runtime;
 
-namespace CaclulatorService
+namespace CalculatorService
 {
-    [EventSource(Name = "MyCompany-CaclulatorApplication-CaclulatorService")]
+    [EventSource(Name = "MyCompany-CalculatorApplication-CalculatorService")]
     internal sealed class ServiceEventSource : EventSource
     {
         public static readonly ServiceEventSource Current = new ServiceEventSource();

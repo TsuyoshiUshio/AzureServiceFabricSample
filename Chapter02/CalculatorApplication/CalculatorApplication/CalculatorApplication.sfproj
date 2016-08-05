@@ -27,7 +27,7 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CaclulatorService\CaclulatorService.csproj" />
+    <ProjectReference Include="..\CalculatorService\CalculatorService.csproj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
   <PropertyGroup>

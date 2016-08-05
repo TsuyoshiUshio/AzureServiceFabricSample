@@ -7,8 +7,8 @@
     <ProjectGuid>{61934A6B-A31B-4400-ACE3-138E7A713BE6}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CaclulatorService</RootNamespace>
-    <AssemblyName>CaclulatorService</AssemblyName>
+    <RootNamespace>CalculatorService</RootNamespace>
+    <AssemblyName>CalculatorService</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -69,9 +69,9 @@
     <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ICaclulatorService.cs" />
+    <Compile Include="ICalculatorService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CaclulatorService.cs" />
+    <Compile Include="CalculatorService.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ServiceEventSource.cs" />
   </ItemGroup>
@@ -82,7 +82,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

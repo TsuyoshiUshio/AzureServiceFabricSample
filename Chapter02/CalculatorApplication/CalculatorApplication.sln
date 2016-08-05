@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "CaclulatorApplication", "CaclulatorApplication\CaclulatorApplication.sfproj", "{33F50471-0B3A-4019-804B-8D7A395D7628}"
+Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "CalculatorApplication", "CalculatorApplication\CalculatorApplication.sfproj", "{33F50471-0B3A-4019-804B-8D7A395D7628}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaclulatorService", "CaclulatorService\CaclulatorService.csproj", "{61934A6B-A31B-4400-ACE3-138E7A713BE6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculatorService", "CalculatorService\CalculatorService.csproj", "{61934A6B-A31B-4400-ACE3-138E7A713BE6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
