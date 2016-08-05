@@ -69,6 +69,7 @@
     <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ICaclulatorService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CaclulatorService.cs" />
     <Compile Include="Program.cs" />
