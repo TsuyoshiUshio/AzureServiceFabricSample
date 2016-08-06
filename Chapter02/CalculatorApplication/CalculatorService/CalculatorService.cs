@@ -38,7 +38,7 @@ namespace CalculatorService
             return new[]
             {
                 new ServiceInstanceListener(context =>
-                this.CreateServiceRemotingListener(context))
+                    this.CreateServiceRemotingListener(context))
             };
         }
 

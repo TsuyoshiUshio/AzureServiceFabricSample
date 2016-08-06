@@ -3,7 +3,7 @@ using Microsoft.ServiceFabric.Services.Remoting;
 
 namespace CalculatorService
 {
-    interface ICalculatorService : IService
+    public interface ICalculatorService : IService
     {
         Task<int> Add(int a, int b);
         Task<int> Subtract(int a, int b);
