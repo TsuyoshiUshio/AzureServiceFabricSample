@@ -1,4 +1,4 @@
-# AzureServiceFabricSample
+# Programming Microsoft Azure Service Fabric UnOfficial Sample
 
 Programming Microsoft Azure Service Fabric is a great book. However, the source code is sometimes old. 
 
