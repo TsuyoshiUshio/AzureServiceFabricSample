@@ -1,10 +1,7 @@
 ﻿using System;
 using CalculatorService;
-using Microsoft.ServiceFabric.Services.Remoting.Client;
-using System.Threading;
 using Microsoft.ServiceFabric.Services.Client;
 using System.Fabric;
-using Microsoft.ServiceFabric.Services.Communication.Wcf;
 using System.ServiceModel;
 using Microsoft.ServiceFabric.Services.Communication.Wcf.Client;
 
