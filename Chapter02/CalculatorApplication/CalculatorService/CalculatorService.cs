@@ -19,14 +19,18 @@ namespace CalculatorService
             : base(context)
         { }
 
-        public Task<int> Add(int a, int b)
+        public Task<string> Add(int a, int b)
         {
-            return Task.FromResult<int>(a + b);
+            return Task.FromResult<string>(string.Format("Instance {0} returns: {1}",
+                this.Context.InstanceId,
+                a + b));
         }
 
-        public Task<int> Subtract(int a, int b)
+        public Task<string> Subtract(int a, int b)
         {
-            return Task.FromResult<int>(a - b);
+            return Task.FromResult<string>(string.Format("Instance {0} returns: {1}",
+                this.Context.InstanceId,
+                a - b));
         }
 
         /// <summary>

@@ -5,7 +5,7 @@ namespace CalculatorService
 {
     public interface ICalculatorService : IService
     {
-        Task<int> Add(int a, int b);
-        Task<int> Subtract(int a, int b);
+        Task<string> Add(int a, int b);
+        Task<string> Subtract(int a, int b);
     }
 }
