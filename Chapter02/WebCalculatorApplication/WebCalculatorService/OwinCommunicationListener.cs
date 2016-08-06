@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.ServiceFabric.Services;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using System.Fabric.Description;
-using Owin;
 using Microsoft.Owin.Hosting;
 using System.Fabric;
 namespace WebCalculatorService
