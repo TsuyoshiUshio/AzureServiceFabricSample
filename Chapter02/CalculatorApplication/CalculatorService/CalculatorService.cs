@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using Microsoft.ServiceFabric.Services.Remoting.Runtime;
-
+using Microsoft.ServiceFabric.Services.Communication.Wcf;
+using Microsoft.ServiceFabric.Services.Communication.Wcf.Runtime;
+using System.ServiceModel;
 namespace CalculatorService
 {
     /// <summary>
@@ -42,8 +44,30 @@ namespace CalculatorService
             return new[]
             {
                 new ServiceInstanceListener(context =>
-                    this.CreateServiceRemotingListener(context))
+                    new WcfCommunicationListener<ICalculatorService>(
+                        wcfServiceObject:this,
+                        serviceContext:context,
+                        endpointResourceName: "ServiceEndpoint",
+                        listenerBinding: WcfUtility.CreateTcpListenerBinding()
+                    )
+            )};
+        }
+
+        private NetTcpBinding CreateListenBinding()
+        {
+            NetTcpBinding binding = new NetTcpBinding(SecurityMode.None)
+            {
+                SendTimeout = TimeSpan.MaxValue,
+                ReceiveTimeout = TimeSpan.MaxValue,
+                OpenTimeout = TimeSpan.FromSeconds(5),
+                CloseTimeout = TimeSpan.FromSeconds(5),
+                MaxConnections = int.MaxValue,
+                MaxReceivedMessageSize = 1024 * 1024
             };
+            binding.MaxBufferSize = (int)binding.MaxReceivedMessageSize;
+            binding.MaxBufferPoolSize = Environment.ProcessorCount * binding.MaxReceivedMessageSize;
+
+            return binding;
         }
 
     }

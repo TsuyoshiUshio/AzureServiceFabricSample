@@ -1,11 +1,14 @@
 ﻿using System.Threading.Tasks;
-using Microsoft.ServiceFabric.Services.Remoting;
+using System.ServiceModel;
 
 namespace CalculatorService
 {
-    public interface ICalculatorService : IService
+    [ServiceContract]
+    public interface ICalculatorService 
     {
+        [OperationContract]  
         Task<string> Add(int a, int b);
+        [OperationContract]
         Task<string> Subtract(int a, int b);
     }
 }
