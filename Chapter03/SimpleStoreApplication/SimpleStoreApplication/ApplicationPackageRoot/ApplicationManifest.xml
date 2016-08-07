@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="SimpleStoreApplicationType" ApplicationTypeVersion="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+<ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="SimpleStoreApplicationType" ApplicationTypeVersion="1.0.1" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Parameters>
     <Parameter Name="ShoppingCartService_MinReplicaSetSize" DefaultValue="3" />
     <Parameter Name="ShoppingCartService_PartitionCount" DefaultValue="1" />
@@ -9,7 +9,7 @@
        should match the Name and Version attributes of the ServiceManifest element defined in the 
        ServiceManifest.xml file. -->
   <ServiceManifestImport>
-    <ServiceManifestRef ServiceManifestName="ShoppingCartServicePkg" ServiceManifestVersion="1.0.0" />
+    <ServiceManifestRef ServiceManifestName="ShoppingCartServicePkg" ServiceManifestVersion="1.0.1" />
     <ConfigOverrides />
   </ServiceManifestImport>
   <DefaultServices>
@@ -19,8 +19,8 @@
          
          The attribute ServiceTypeName below must match the name defined in the imported ServiceManifest.xml file. -->
     <Service Name="ShoppingCartService">
-      <StatefulService ServiceTypeName="ShoppingCartServiceType" TargetReplicaSetSize="[ShoppingCartService_TargetReplicaSetSize]" MinReplicaSetSize="[ShoppingCartService_MinReplicaSetSize]">
-        <UniformInt64Partition PartitionCount="[ShoppingCartService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
+      <StatefulService ServiceTypeName="ShoppingCartServiceType" TargetReplicaSetSize="3" MinReplicaSetSize="2">
+        <UniformInt64Partition PartitionCount="10" LowKey="0" HighKey="9" />
       </StatefulService>
     </Service>
   </DefaultServices>

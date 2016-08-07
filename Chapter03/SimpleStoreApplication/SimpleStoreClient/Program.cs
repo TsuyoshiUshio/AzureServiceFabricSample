@@ -13,23 +13,37 @@ namespace SimpleStoreClient
             Uri ServiceName = new Uri("fabric:/SimpleStoreApplication/ShoppingCartService");
             ServicePartitionResolver serviceResolver = new ServicePartitionResolver(() => new FabricClient());
             NetTcpBinding binding = CreateClientConnectionBinding();
-            Client shoppingClient = new Client(new WcfCommunicationClientFactory<IShoppingCartService>(binding, null, serviceResolver), ServiceName);
-            shoppingClient.AddItem(new ShoppingCartItem
+
+            for (int i = 0; i < 10; i++)
             {
-                ProductName = "XBOX ONE",
-                UnitPrice = 329.0,
-                Amount = 2
-            }).Wait();
-            var list = shoppingClient.GetItems().Result;
-            foreach(var item in list)
-            {
-                Console.WriteLine(string.Format("{0}: {1:C2} X {2} = {3:C2}",
-                    item.ProductName,
-                    item.UnitPrice,
-                    item.Amount,
-                    item.LineTotal));
+                Client shoppingClient = new Client(new WcfCommunicationClientFactory<IShoppingCartService>(binding, null, serviceResolver), ServiceName, i);
+                shoppingClient.AddItem(new ShoppingCartItem
+                {
+                    ProductName = "XBOX ONE",
+                    UnitPrice = 329.0,
+                    Amount = 2
+                }).Wait();
+                PrintPartition(shoppingClient);
+                var list = shoppingClient.GetItems().Result;
+                foreach (var item in list)
+                {
+                    Console.WriteLine(string.Format("{0}: {1:C2} X {2} = {3:C2}",
+                        item.ProductName,
+                        item.UnitPrice,
+                        item.Amount,
+                        item.LineTotal));
+                }
             }
             Console.ReadKey();
+        }
+
+        private static void PrintPartition(Client client)
+        {
+            ResolvedServicePartition partition;
+            if (client.TryGetLastResolvedServicePartition(out partition))
+            {
+                Console.WriteLine("Partition ID: " + partition.Info.Id);
+            }
         }
 
         private static NetTcpBinding CreateClientConnectionBinding()
