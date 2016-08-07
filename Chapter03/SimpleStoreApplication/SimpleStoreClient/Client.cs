@@ -11,7 +11,7 @@ namespace SimpleStoreClient
     public class Client : ServicePartitionClient<WcfCommunicationClient<IShoppingCartService>>,
         IShoppingCartService
     {
-        public Client(WcfCommunicationClientFactory<IShoppingCartService> clientFactory, Uri serviceName, long customerId)
+        public Client(WcfCommunicationClientFactory<IShoppingCartService> clientFactory, Uri serviceName, string customerId)
            : base(clientFactory, serviceName, new ServicePartitionKey(customerId))
         {
 

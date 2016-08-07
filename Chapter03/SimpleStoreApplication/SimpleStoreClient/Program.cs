@@ -14,9 +14,9 @@ namespace SimpleStoreClient
             ServicePartitionResolver serviceResolver = new ServicePartitionResolver(() => new FabricClient());
             NetTcpBinding binding = CreateClientConnectionBinding();
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 1; i <= 3; i++)
             {
-                Client shoppingClient = new Client(new WcfCommunicationClientFactory<IShoppingCartService>(binding, null, serviceResolver), ServiceName, i);
+                Client shoppingClient = new Client(new WcfCommunicationClientFactory<IShoppingCartService>(binding, null, serviceResolver), ServiceName, "Customer " + i);
                 shoppingClient.AddItem(new ShoppingCartItem
                 {
                     ProductName = "XBOX ONE",
