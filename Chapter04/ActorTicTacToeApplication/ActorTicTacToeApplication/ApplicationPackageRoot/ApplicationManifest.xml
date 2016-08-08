@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="ActorTicTacToeApplicationType" ApplicationTypeVersion="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+<ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="ActorTicTacToeApplicationType" ApplicationTypeVersion="1.0.1" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Parameters>
     <Parameter Name="GameActorService_PartitionCount" DefaultValue="10" />
     <Parameter Name="GameActorService_MinReplicaSetSize" DefaultValue="3" />
@@ -12,13 +12,13 @@
        should match the Name and Version attributes of the ServiceManifest element defined in the 
        ServiceManifest.xml file. -->
   <ServiceManifestImport>
-    <ServiceManifestRef ServiceManifestName="GamePkg" ServiceManifestVersion="1.0.0" />
+    <ServiceManifestRef ServiceManifestName="GamePkg" ServiceManifestVersion="1.0.1" />
   </ServiceManifestImport>
   <ServiceManifestImport>
     <ServiceManifestRef ServiceManifestName="PlayerPkg" ServiceManifestVersion="1.0.0" />
   </ServiceManifestImport>
   <DefaultServices>
-    <Service Name="GameActorService" GeneratedIdRef="b92d987c-9d88-4cdd-8206-a073e458a372|Volatile">
+    <Service Name="GameActorService" GeneratedIdRef="edb01294-7f0e-4666-a879-ddc9633bb8ac|Persisted">
       <StatefulService ServiceTypeName="GameActorServiceType" TargetReplicaSetSize="[GameActorService_TargetReplicaSetSize]" MinReplicaSetSize="[GameActorService_MinReplicaSetSize]">
         <UniformInt64Partition PartitionCount="[GameActorService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
       </StatefulService>

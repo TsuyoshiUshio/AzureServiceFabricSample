@@ -21,7 +21,7 @@ namespace Game
     ///  - Volatile: State is kept in memory only and replicated.
     ///  - None: State is kept in memory only and not replicated.
     /// </remarks>
-    [StatePersistence(StatePersistence.Volatile)]
+    [StatePersistence(StatePersistence.Persisted)]
     internal class Game : Actor, IGame
     {
         [DataContract]
