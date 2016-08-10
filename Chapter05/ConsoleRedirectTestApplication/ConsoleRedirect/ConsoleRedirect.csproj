@@ -75,6 +75,7 @@
     <Compile Include="ServiceEventSource.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="PackageRoot\Code\scripts\test.cmd" />
     <None Include="PackageRoot\Config\Settings.xml" />
     <None Include="PackageRoot\ServiceManifest.xml" />
     <None Include="App.config" />
