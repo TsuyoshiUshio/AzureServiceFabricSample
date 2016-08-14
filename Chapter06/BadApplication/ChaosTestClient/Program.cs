@@ -19,8 +19,8 @@ namespace Testability
             try
             {
                 RunChaosTestScenarioAsync(clusterConnection).Wait();
-            } 
-            catch ( AggregateException ae)
+            }
+            catch (AggregateException ae)
             {
                 Console.WriteLine("Chaos Test Scenario did not complete: ");
                 foreach (Exception ex in ae.InnerExceptions)
@@ -52,6 +52,8 @@ namespace Testability
                 maxConcurrentFaults,
                 enableMoveReplicaFaults,
                 timeToRun);
+            scenarioParameters.WaitTimeBetweenIterations = TimeSpan.FromSeconds(30);
+            scenarioParameters.WaitTimeBetweenFaults = TimeSpan.FromSeconds(10);
 
             ChaosTestScenario chaosScenario = new ChaosTestScenario(fabricClient, scenarioParameters);
 
@@ -60,7 +62,8 @@ namespace Testability
                 await chaosScenario.ExecuteAsync(CancellationToken.None);
 
 
-            } catch (AggregateException ae)
+            }
+            catch (AggregateException ae)
             {
                 throw ae.InnerException;
             }
