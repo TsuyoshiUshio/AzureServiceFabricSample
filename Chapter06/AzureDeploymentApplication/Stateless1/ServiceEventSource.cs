@@ -9,7 +9,7 @@ using Microsoft.ServiceFabric.Services.Runtime;
 
 namespace Stateless1
 {
-    [EventSource(Name = "MyCompany-AzureDeploymentApplication-Stateless1")]
+    [EventSource(Name = "Microsoft-ServiceFabric-Services")]
     internal sealed class ServiceEventSource : EventSource
     {
         public static readonly ServiceEventSource Current = new ServiceEventSource();

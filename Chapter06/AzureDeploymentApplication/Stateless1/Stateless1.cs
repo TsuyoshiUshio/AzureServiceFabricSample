@@ -44,7 +44,7 @@ namespace Stateless1
 
                 ServiceEventSource.Current.ServiceMessage(this, "Working-{0}", ++iterations);
 
-                await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
+                await Task.Delay(TimeSpan.FromSeconds(30), cancellationToken);
             }
         }
     }
