@@ -55,8 +55,8 @@ namespace BadStateful
                 {
                     var result = await myDictionary.TryGetValueAsync(tx, key);
 
-                    if (result.HasValue && localValue != result.Value)
-                        throw new ApplicationException("State is inconsistent");
+                 //   if (result.HasValue && localValue != result.Value)
+                 //       throw new ApplicationException("State is inconsistent");
 
                     await myDictionary.AddOrUpdateAsync(tx, key, 0, (k, v) => ++v);
                     localValue++;

@@ -10,17 +10,18 @@ using System.Threading;
 
 namespace Testability
 {
-    class Program
+    class FailOverTest
     {
         static int Main(string[] args)
         {
             string clusterConnection = "localhost:19000";
+            Uri serviceName = new Uri("fabric:/BadApplication/BadStateful");
             Console.WriteLine("Starting Chaos Test Scenario...");
             try
             {
-                RunChaosTestScenarioAsync(clusterConnection).Wait();
-            } 
-            catch ( AggregateException ae)
+                RunFailoverTestScenarioAsync(clusterConnection, serviceName).Wait();
+            }
+            catch (AggregateException ae)
             {
                 Console.WriteLine("Chaos Test Scenario did not complete: ");
                 foreach (Exception ex in ae.InnerExceptions)
@@ -38,31 +39,28 @@ namespace Testability
             return 0;
         }
 
-        static async Task RunChaosTestScenarioAsync(string clusterConnection)
+        static async Task RunFailoverTestScenarioAsync(string clusterConnection, Uri serviceName)
         {
             TimeSpan maxClusterStabilizationTimeout = TimeSpan.FromSeconds(180);
-            uint maxConcurrentFaults = 3;
-            bool enableMoveReplicaFaults = true;
+            PartitionSelector randomPartitionSelector = PartitionSelector.RandomOf(serviceName);
 
             FabricClient fabricClient = new FabricClient(clusterConnection);
 
             TimeSpan timeToRun = TimeSpan.FromMinutes(60);
-            ChaosTestScenarioParameters scenarioParameters = new ChaosTestScenarioParameters(
-                maxClusterStabilizationTimeout,
-                maxConcurrentFaults,
-                enableMoveReplicaFaults,
-                timeToRun);
-            scenarioParameters.WaitTimeBetweenIterations = TimeSpan.FromSeconds(30);
-            scenarioParameters.WaitTimeBetweenFaults = TimeSpan.FromSeconds(10);
+            FailoverTestScenarioParameters scenarioParameters = new FailoverTestScenarioParameters(
+                randomPartitionSelector,
+                timeToRun,
+                maxClusterStabilizationTimeout);
 
-            ChaosTestScenario chaosScenario = new ChaosTestScenario(fabricClient, scenarioParameters);
+            FailoverTestScenario failoverScenario = new FailoverTestScenario(fabricClient, scenarioParameters);
 
             try
             {
-                await chaosScenario.ExecuteAsync(CancellationToken.None);
+                await failoverScenario.ExecuteAsync(CancellationToken.None);
 
 
-            } catch (AggregateException ae)
+            }
+            catch (AggregateException ae)
             {
                 throw ae.InnerException;
             }
