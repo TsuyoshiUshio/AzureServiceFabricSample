@@ -20,6 +20,12 @@
                                     AzureActiveDirectory="true"
                                     ServerCertThumbprint="0123456789012345678901234567890123456789" />
   -->
-  <ClusterConnectionParameters ConnectionEndpoint="sixpackcluster.japaneast.cloudapp.azure.com:19000" />
+  <ClusterConnectionParameters ConnectionEndpoint="sixpackcluster.japaneast.cloudapp.azure.com:19000"
+                               X509Credential="true"
+                               ServerCertThumbprint="5DB9A9EE09292D10AD77B5F05465898BE3F196C7"
+                               FindType="FindByThumbprint"
+                               FindValue="5DB9A9EE09292D10AD77B5F05465898BE3F196C7"
+                               StoreLocation="CurrentUser"
+                               StoreName="My" />
   <ApplicationParameterFile Path="..\ApplicationParameters\Cloud.xml" />
 </PublishProfile>
