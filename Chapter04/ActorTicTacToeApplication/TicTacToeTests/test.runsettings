@@ -2,7 +2,6 @@
 <RunSettings>
   <!-- Configurations that affect the Test Framework -->
   <RunConfiguration>
-    <MaxCpuCount>1</MaxCpuCount>
     <!-- Path relative to solution directory -->
     <ResultsDirectory>.\TestResults</ResultsDirectory>
 
@@ -12,9 +11,6 @@
 
     <!-- Framework35 | [Framework40] | Framework45 -->
     <TargetFrameworkVersion>Framework45</TargetFrameworkVersion>
-
-    <!-- Path to Test Adapters -->
-    <TestAdaptersPaths>%SystemDrive%\Temp\foo;%SystemDrive%\Temp\bar</TestAdaptersPaths>
   </RunConfiguration>
 
   <!-- Configurations for data collectors -->
