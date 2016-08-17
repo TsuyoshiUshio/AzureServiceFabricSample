@@ -10,6 +10,7 @@ using Microsoft.ServiceFabric.Actors.Client;
 using Microsoft.ServiceFabric.Data;
 using SensorActor.Interfaces;
 using System.ComponentModel;
+using FloorActor.Interfaces;
 
 namespace SensorActor
 {
@@ -27,8 +28,22 @@ namespace SensorActor
         [DataContract]
         public sealed class ActorState
         {
+            private double mTemperature = 0.0;
             [DataMember]
-            public double Temperature { get; set; }
+            public double Temperature {
+                get
+                {
+                    return mTemperature;
+                }
+                set
+                {
+                    mTemperature = value;
+                    var proxy = ActorProxy.Create<IFloorActor>
+                        (new ActorId(2016), "fabric:/SensorAggregationApplication");
+                    proxy.SetTemperatureAsync(Index, mTemperature);
+                }
+
+            }
             [DataMember]
             public int Index { get; set; }
         }
@@ -78,7 +93,7 @@ namespace SensorActor
         /// </summary>
         protected override Task OnActivateAsync()
         {
-            ActorEventSource.Current.ActorMessage(this, "Actor activated.");
+            ActorEventSource.Current.ActorMessage(this, "SensorActor activated.");
             var state = this.StateManager.TryGetStateAsync<ActorState>("MyState").GetAwaiter().GetResult().Value;
 
             if (state == null)

@@ -13,17 +13,7 @@ namespace FloorActor.Interfaces
     /// </summary>
     public interface IFloorActor : IActor
     {
-        /// <summary>
-        /// TODO: Replace with your own actor method.
-        /// </summary>
-        /// <returns></returns>
-        Task<int> GetCountAsync();
-
-        /// <summary>
-        /// TODO: Replace with your own actor method.
-        /// </summary>
-        /// <param name="count"></param>
-        /// <returns></returns>
-        Task SetCountAsync(int count);
+        Task<double> GetTemperatureAsync();
+        Task SetTemperatureAsync(int index, double tempreture);
     }
 }

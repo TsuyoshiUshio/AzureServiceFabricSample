@@ -104,6 +104,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FloorActor.Interfaces\FloorActor.Interfaces.csproj">
+      <Project>{d82f54a3-c7e3-4b22-a7a3-7aec82408233}</Project>
+      <Name>FloorActor.Interfaces</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SensorActor.Interfaces\SensorActor.Interfaces.csproj">
       <Project>{FE40C3C4-1C6F-4ABE-B284-76E3D09B2CED}</Project>
       <Name>SensorActor.Interfaces</Name>

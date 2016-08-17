@@ -7,7 +7,8 @@ using Microsoft.ServiceFabric.Actors;
 using Microsoft.ServiceFabric.Actors.Runtime;
 using Microsoft.ServiceFabric.Actors.Client;
 using FloorActor.Interfaces;
-
+using System.Runtime.Serialization;
+using System.ComponentModel;
 namespace FloorActor
 {
     /// <remarks>
@@ -21,41 +22,44 @@ namespace FloorActor
     [StatePersistence(StatePersistence.Persisted)]
     internal class FloorActor : Actor, IFloorActor
     {
+     [DataContract]
+     public sealed class ActorState
+        {
+            [DataMember]
+            public double[] Temperature { get; set; }
+        }  
+
+        [ReadOnly(true)]
+        public Task<double> GetTemperatureAsync()
+        {
+            var temperature = this.StateManager.TryGetStateAsync<ActorState>("MyState").GetAwaiter().GetResult().Value.Temperature;
+            return Task.FromResult<double>(temperature.Average());
+        }
+
+        public Task SetTemperatureAsync(int index, double temperature)
+        {
+            var state = this.StateManager.TryGetStateAsync<ActorState>("MyState").GetAwaiter().GetResult().Value;
+            state.Temperature[index] = temperature;
+            this.StateManager.AddOrUpdateStateAsync<ActorState>("MyState", state, (k, v) => state);
+            return Task.FromResult(true);
+        }
+
         /// <summary>
         /// This method is called whenever an actor is activated.
         /// An actor is activated the first time any of its methods are invoked.
         /// </summary>
         protected override Task OnActivateAsync()
         {
-            ActorEventSource.Current.ActorMessage(this, "Actor activated.");
+            ActorEventSource.Current.ActorMessage(this, "FloorActor activated.");
+            var state = this.StateManager.TryGetStateAsync<ActorState>("MyState").GetAwaiter().GetResult().Value;
 
-            // The StateManager is this actor's private state store.
-            // Data stored in the StateManager will be replicated for high-availability for actors that use volatile or persisted state storage.
-            // Any serializable object can be saved in the StateManager.
-            // For more information, see http://aka.ms/servicefabricactorsstateserialization
-
-            return this.StateManager.TryAddStateAsync("count", 0);
+            if (state == null)
+            {
+                state = new ActorState() { Temperature = new double[1000] };
+            }
+            this.StateManager.SetStateAsync<ActorState>("MyState", state);
+            return Task.FromResult(true);
         }
 
-        /// <summary>
-        /// TODO: Replace with your own actor method.
-        /// </summary>
-        /// <returns></returns>
-        Task<int> IFloorActor.GetCountAsync()
-        {
-            return this.StateManager.GetStateAsync<int>("count");
-        }
-
-        /// <summary>
-        /// TODO: Replace with your own actor method.
-        /// </summary>
-        /// <param name="count"></param>
-        /// <returns></returns>
-        Task IFloorActor.SetCountAsync(int count)
-        {
-            // Requests are not guaranteed to be processed in order nor at most once.
-            // The update function here verifies that the incoming count is greater than the current count to preserve order.
-            return this.StateManager.AddOrUpdateStateAsync("count", count, (key, value) => count > value ? count : value);
-        }
     }
 }

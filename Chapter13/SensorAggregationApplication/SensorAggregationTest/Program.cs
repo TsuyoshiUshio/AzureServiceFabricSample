@@ -7,6 +7,7 @@ using Microsoft.ServiceFabric.Actors;
 using Microsoft.ServiceFabric.Actors.Client;
 using SensorActor.Interfaces;
 using System.Diagnostics;
+using FloorActor.Interfaces;
 
 namespace SensorAggregationTest
 {
@@ -21,6 +22,13 @@ namespace SensorAggregationTest
             setTemperatures(100, 50);
             watch.Stop();
             Console.WriteLine("Time to set temperatures: " + watch.ElapsedMilliseconds);
+            watch.Start();
+            var proxy = ActorProxy.Create<IFloorActor>
+                (new ActorId(2016), "fabric:/SensorAggregationApplication");
+            Console.WriteLine("Avarage temperature: " + proxy.GetTemperatureAsync().Result);
+            watch.Stop();
+            Console.WriteLine("Time to get average temperature: " + watch.ElapsedMilliseconds);
+
             Console.ReadKey();
 
         }
