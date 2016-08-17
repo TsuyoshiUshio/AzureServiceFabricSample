@@ -42,11 +42,11 @@ namespace SensorActor
 
             set
             {
-                this.StateManager.AddOrUpdateStateAsync<ActorState>("MyState", value, (k, v) => value)
+                this.StateManager.AddOrUpdateStateAsync<ActorState>("MyState", value, (k, v) => value);
             }
         }
 
-
+        [ReadOnly(true)]
         public Task<int> GetIndexAsync()
         {
             return Task.FromResult<int>(this.StateProxy.Index);

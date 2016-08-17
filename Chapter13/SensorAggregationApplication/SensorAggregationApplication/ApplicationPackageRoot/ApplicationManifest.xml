@@ -1,10 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ApplicationManifest ApplicationTypeName="SensorAggregationApplicationType"
-                     ApplicationTypeVersion="1.0.0"
-                     xmlns="http://schemas.microsoft.com/2011/01/fabric"
-                     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="SensorAggregationApplicationType" ApplicationTypeVersion="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Parameters>
+    <Parameter Name="FloorActorService_PartitionCount" DefaultValue="10" />
+    <Parameter Name="FloorActorService_MinReplicaSetSize" DefaultValue="3" />
+    <Parameter Name="FloorActorService_TargetReplicaSetSize" DefaultValue="3" />
+    <Parameter Name="SensorActorService_PartitionCount" DefaultValue="10" />
+    <Parameter Name="SensorActorService_MinReplicaSetSize" DefaultValue="3" />
+    <Parameter Name="SensorActorService_TargetReplicaSetSize" DefaultValue="3" />
   </Parameters>
   <!-- Import the ServiceManifest from the ServicePackage. The ServiceManifestName and ServiceManifestVersion 
        should match the Name and Version attributes of the ServiceManifest element defined in the 
@@ -16,6 +18,16 @@
     <ServiceManifestRef ServiceManifestName="SensorActorPkg" ServiceManifestVersion="1.0.0" />
   </ServiceManifestImport>
   <DefaultServices>
+    <Service Name="FloorActorService" GeneratedIdRef="7595a68c-cb20-436b-82a7-d36fc1df1a85|Persisted">
+      <StatefulService ServiceTypeName="FloorActorServiceType" TargetReplicaSetSize="[FloorActorService_TargetReplicaSetSize]" MinReplicaSetSize="[FloorActorService_MinReplicaSetSize]">
+        <UniformInt64Partition PartitionCount="[FloorActorService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
+      </StatefulService>
+    </Service>
+    <Service Name="SensorActorService" GeneratedIdRef="e13b022d-e519-4255-b598-e87a0a3c9d63|Persisted">
+      <StatefulService ServiceTypeName="SensorActorServiceType" TargetReplicaSetSize="[SensorActorService_TargetReplicaSetSize]" MinReplicaSetSize="[SensorActorService_MinReplicaSetSize]">
+        <UniformInt64Partition PartitionCount="[SensorActorService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
+      </StatefulService>
+    </Service>
     <!-- The section below creates instances of service types, when an instance of this 
          application type is created. You can also create one or more instances of service type using the 
          ServiceFabric PowerShell module.
