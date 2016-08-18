@@ -58,8 +58,8 @@ namespace SensorActor
         [ReadOnly(true)]
         public Task<double> GetTemperatureAsync()
         {
-            return Task.FromResult<double>(this.StateProxy.Temperature);
-        }
+            return Task.FromResult<double>(this.StateManager.TryGetStateAsync<ActorState>("MyState").Result.Value.Temperature);
+       }
 
         public Task SetIndexAsync(int index)
         {
