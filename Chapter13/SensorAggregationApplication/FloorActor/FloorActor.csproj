@@ -93,6 +93,10 @@
       <Project>{D82F54A3-C7E3-4B22-A7A3-7AEC82408233}</Project>
       <Name>FloorActor.Interfaces</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SensorActor.Interfaces\SensorActor.Interfaces.csproj">
+      <Project>{fe40c3c4-1c6f-4abe-b284-76e3d09b2ced}</Project>
+      <Name>SensorActor.Interfaces</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.ServiceFabric.Actors.2.1.150\build\Microsoft.ServiceFabric.Actors.targets" Condition="Exists('..\packages\Microsoft.ServiceFabric.Actors.2.1.150\build\Microsoft.ServiceFabric.Actors.targets')" />

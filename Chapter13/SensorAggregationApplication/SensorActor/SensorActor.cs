@@ -28,21 +28,9 @@ namespace SensorActor
         [DataContract]
         public sealed class ActorState
         {
-            private double mTemperature = 0.0;
             [DataMember]
             public double Temperature {
-                get
-                {
-                    return mTemperature;
-                }
-                set
-                {
-                    mTemperature = value;
-                    var proxy = ActorProxy.Create<IFloorActor>
-                        (new ActorId(2016), "fabric:/SensorAggregationApplication");
-                    proxy.SetTemperatureAsync(Index, mTemperature);
-                }
-
+                get; set;
             }
             [DataMember]
             public int Index { get; set; }

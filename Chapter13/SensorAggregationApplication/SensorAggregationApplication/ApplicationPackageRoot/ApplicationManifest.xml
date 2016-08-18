@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="SensorAggregationApplicationType" ApplicationTypeVersion="1.0.2" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+<ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="SensorAggregationApplicationType" ApplicationTypeVersion="1.0.3" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Parameters>
     <Parameter Name="FloorActorService_PartitionCount" DefaultValue="10" />
     <Parameter Name="FloorActorService_MinReplicaSetSize" DefaultValue="3" />
@@ -12,10 +12,10 @@
        should match the Name and Version attributes of the ServiceManifest element defined in the 
        ServiceManifest.xml file. -->
   <ServiceManifestImport>
-    <ServiceManifestRef ServiceManifestName="FloorActorPkg" ServiceManifestVersion="1.0.1" />
+    <ServiceManifestRef ServiceManifestName="FloorActorPkg" ServiceManifestVersion="1.0.2" />
   </ServiceManifestImport>
   <ServiceManifestImport>
-    <ServiceManifestRef ServiceManifestName="SensorActorPkg" ServiceManifestVersion="1.0.1" />
+    <ServiceManifestRef ServiceManifestName="SensorActorPkg" ServiceManifestVersion="1.0.2" />
   </ServiceManifestImport>
   <DefaultServices>
     <Service Name="FloorActorService" GeneratedIdRef="7595a68c-cb20-436b-82a7-d36fc1df1a85|Persisted">

@@ -14,6 +14,5 @@ namespace FloorActor.Interfaces
     public interface IFloorActor : IActor
     {
         Task<double> GetTemperatureAsync();
-        Task SetTemperatureAsync(int index, double tempreture);
     }
 }

@@ -9,6 +9,7 @@ using Microsoft.ServiceFabric.Actors.Client;
 using FloorActor.Interfaces;
 using System.Runtime.Serialization;
 using System.ComponentModel;
+using SensorActor.Interfaces;
 namespace FloorActor
 {
     /// <remarks>
@@ -26,22 +27,26 @@ namespace FloorActor
      public sealed class ActorState
         {
             [DataMember]
-            public double[] Temperature { get; set; }
+            public double Temperature { get; set; }
         }  
 
         [ReadOnly(true)]
         public Task<double> GetTemperatureAsync()
         {
-            var temperature = this.StateManager.TryGetStateAsync<ActorState>("MyState").GetAwaiter().GetResult().Value.Temperature;
-            return Task.FromResult<double>(temperature.Average());
-        }
-
-        public Task SetTemperatureAsync(int index, double temperature)
-        {
-            var state = this.StateManager.TryGetStateAsync<ActorState>("MyState").GetAwaiter().GetResult().Value;
-            state.Temperature[index] = temperature;
-            this.StateManager.AddOrUpdateStateAsync<ActorState>("MyState", state, (k, v) => state);
-            return Task.FromResult(true);
+            Task<double>[] tasks = new Task<double>[1000];
+            double[] readings = new double[1000];
+            Parallel.For(0, 1000, i =>
+            {
+                var proxy = ActorProxy.Create<ISensorActor>
+                (new ActorId(i), "fabric:/SensorAggregationApplication");
+                tasks[i] = proxy.GetTemperatureAsync();
+            });
+            Task.WaitAll(tasks);
+            Parallel.For(0, 1000, i =>
+            {
+                readings[i] = tasks[i].Result;
+            });
+            return Task.FromResult(readings.Average());
         }
 
         /// <summary>
@@ -55,7 +60,7 @@ namespace FloorActor
 
             if (state == null)
             {
-                state = new ActorState() { Temperature = new double[1000] };
+                state = new ActorState() { Temperature = 0 };
             }
             this.StateManager.SetStateAsync<ActorState>("MyState", state);
             return Task.FromResult(true);
