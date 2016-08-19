@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.ServiceFabric.Actors;
 using Microsoft.ServiceFabric.Actors.Runtime;
-using Microsoft.ServiceFabric.Actors.Client;
+using Microsoft.ServiceFabric.Data;
 using IoTHubPartitionMap.Interfaces;
+using System.Runtime.Serialization;
+using Microsoft.ServiceBus.Messaging;
 
 namespace IoTHubPartitionMap
 {
@@ -21,41 +21,132 @@ namespace IoTHubPartitionMap
     [StatePersistence(StatePersistence.Persisted)]
     internal class IoTHubPartitionMap : Actor, IIoTHubPartitionMap
     {
+
+        IActorTimer mTimer;
+        [DataContract]
+        internal sealed class ActorState
+        {
+            [DataMember]
+            public List<string> PartitionNames { get; set; }
+            [DataMember]
+            public Dictionary<string, DateTime> PartitionLeases { get; set; }
+
+            //private IActorStateManager stateManager;
+            //internal static ActorState GetStateAsync(IActorStateManager stateManager)
+            //{
+            //    var state = stateManager.GetStateAsync<ActorState>("MyState").Result;
+            //    state.stateManager = stateManager;
+            //    return state;
+            //}
+
+            //internal static ActorState GetState(IActorStateManager stateManager)
+            //{
+            //    var state = stateManager.GetStateAsync<ActorState>("MyState").GetAwaiter().GetResult();
+            //    state.stateManager = stateManager;
+            //    return state;
+            //}
+            //internal void Save()
+            //{
+            //    stateManager.AddOrUpdateStateAsync<ActorState>("MySate", this, (k, v) => this).GetAwaiter();
+            //}
+        }
+
+        public async Task<string>  LeaseTHubPartitionAsync()
+        {
+            string ret = "";
+            var state = await this.StateManager.GetStateAsync<ActorState>("MyState");
+            foreach (string partition in state.PartitionNames)
+            {
+                ActorEventSource.Current.ActorMessage(this, "********** LeaseTHub: {0}******", partition);
+                if (!state.PartitionLeases.ContainsKey(partition))
+                {
+                    ActorEventSource.Current.ActorMessage(this, "********** LeaseTHub added: {0}******", partition);
+                    state.PartitionLeases.Add(partition, DateTime.Now);
+                    ret = partition;
+                    break;
+                }
+            }
+            ActorEventSource.Current.ActorMessage(this, "********** LeaseTHub ret: {0}******", ret);
+            await this.StateManager.SetStateAsync<ActorState>("MyState", state);
+            await this.SaveStateAsync();
+            return ret;
+        }
+
+        public async Task<string> RenewIoTHubPartitionLeaseAsync(string partition)
+        {
+            string ret = "";
+            var state = await this.StateManager.GetStateAsync<ActorState>("MyState");
+            
+            if (state.PartitionLeases.ContainsKey(partition))
+            {
+                state.PartitionLeases[partition] = DateTime.Now;
+                await this.StateManager.SetStateAsync<ActorState>("MyState", state);
+                ret = partition;
+            }
+            return ret;
+        }
+
         /// <summary>
         /// This method is called whenever an actor is activated.
         /// An actor is activated the first time any of its methods are invoked.
         /// </summary>
-        protected override Task OnActivateAsync()
+        protected override async Task OnActivateAsync()
         {
-            ActorEventSource.Current.ActorMessage(this, "Actor activated.");
+            var state = await this.StateManager.TryGetStateAsync<ActorState>("MyState");
+            if (!state.HasValue)
+            {
+                var actorState = new ActorState
+                {
+                    PartitionNames = new List<string>(),
+                    PartitionLeases = new Dictionary<string, DateTime>()
+                };
+                await this.StateManager.TryAddStateAsync<ActorState>("MyState", actorState);
 
-            // The StateManager is this actor's private state store.
-            // Data stored in the StateManager will be replicated for high-availability for actors that use volatile or persisted state storage.
-            // Any serializable object can be saved in the StateManager.
-            // For more information, see http://aka.ms/servicefabricactorsstateserialization
-
-            return this.StateManager.TryAddStateAsync("count", 0);
+                await ResetPartitionNamesAsync();
+                mTimer = RegisterTimer(CheckLease, null, TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(30));
+                await this.SaveStateAsync();
+            }
         }
 
-        /// <summary>
-        /// TODO: Replace with your own actor method.
-        /// </summary>
-        /// <returns></returns>
-        Task<int> IIoTHubPartitionMap.GetCountAsync()
+        protected override Task OnDeactivateAsync()
         {
-            return this.StateManager.GetStateAsync<int>("count");
+
+            if (mTimer != null)
+                UnregisterTimer(mTimer);
+            return base.OnDeactivateAsync();
+
+
         }
 
-        /// <summary>
-        /// TODO: Replace with your own actor method.
-        /// </summary>
-        /// <param name="count"></param>
-        /// <returns></returns>
-        Task IIoTHubPartitionMap.SetCountAsync(int count)
+        private async Task ResetPartitionNamesAsync()
         {
-            // Requests are not guaranteed to be processed in order nor at most once.
-            // The update function here verifies that the incoming count is greater than the current count to preserve order.
-            return this.StateManager.AddOrUpdateStateAsync("count", count, (key, value) => count > value ? count : value);
+            var eventHubClient = EventHubClient.CreateFromConnectionString("HostName=iote2e.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=Bsp4+D5at3lTacsNaZPvx0FhVvrdDa8LGFzKS/B6zzQ=", "messages/events");
+            var partitions = eventHubClient.GetRuntimeInformation().PartitionIds;
+            var state  =  await this.StateManager.GetStateAsync<ActorState>("MyState");
+            ActorEventSource.Current.ActorMessage(this, "********** Partition initializer ******");
+            foreach (string partition in partitions)
+            {
+                ActorEventSource.Current.ActorMessage(this, "**********  Partition ={0} ******", partition);
+                state.PartitionNames.Add(partition);
+            }
+            await this.StateManager.SetStateAsync<ActorState>("MyState", state);
+            await this.SaveStateAsync();
         }
+        private async Task CheckLease(Object state)
+        {
+            var stateProxy = await this.StateManager.GetStateAsync<ActorState>("MyState");
+            List<string> keys = stateProxy.PartitionLeases.Keys.ToList();
+            foreach (string key in keys)
+            {
+                if (DateTime.Now - stateProxy.PartitionLeases[key] >= TimeSpan.FromSeconds(60))
+                    stateProxy.PartitionLeases.Remove(key);
+
+            }
+            await this.StateManager.SetStateAsync<ActorState>("MyState", stateProxy);
+            await this.SaveStateAsync();
+        }
+
     }
+
+
 }

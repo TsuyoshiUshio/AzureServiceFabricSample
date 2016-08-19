@@ -13,17 +13,7 @@ namespace IoTHubPartitionMap.Interfaces
     /// </summary>
     public interface IIoTHubPartitionMap : IActor
     {
-        /// <summary>
-        /// TODO: Replace with your own actor method.
-        /// </summary>
-        /// <returns></returns>
-        Task<int> GetCountAsync();
-
-        /// <summary>
-        /// TODO: Replace with your own actor method.
-        /// </summary>
-        /// <param name="count"></param>
-        /// <returns></returns>
-        Task SetCountAsync(int count);
+        Task<string> LeaseTHubPartitionAsync();
+        Task<string> RenewIoTHubPartitionLeaseAsync(string partition);
     }
 }

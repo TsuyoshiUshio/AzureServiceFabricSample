@@ -36,60 +36,51 @@ namespace SensorActor
             public int Index { get; set; }
         }
 
-        private ActorState StateProxy
-        {
-            get
-            {
-                return this.StateManager.TryGetStateAsync<ActorState>("MyState").GetAwaiter().GetResult().Value;
-            }
 
-            set
-            {
-                this.StateManager.AddOrUpdateStateAsync<ActorState>("MyState", value, (k, v) => value);
-            }
+        [ReadOnly(true)]
+        public async Task<int> GetIndexAsync()
+        {
+            var state = await this.StateManager.TryGetStateAsync<ActorState>("MyState");
+            return state.Value.Index;
         }
 
         [ReadOnly(true)]
-        public Task<int> GetIndexAsync()
+        public async Task<double> GetTemperatureAsync()
         {
-            return Task.FromResult<int>(this.StateProxy.Index);
-        }
-
-        [ReadOnly(true)]
-        public Task<double> GetTemperatureAsync()
-        {
-            return Task.FromResult<double>(this.StateManager.TryGetStateAsync<ActorState>("MyState").Result.Value.Temperature);
+            var state = await this.StateManager.TryGetStateAsync<ActorState>("MyState");
+            return state.Value.Temperature;
        }
 
-        public Task SetIndexAsync(int index)
+        public async Task SetIndexAsync(int index)
         {
-            Func<ActorState, int, ActorState> addIndex = (state, idx) => { state.Index = idx; return state; };
-            addIndex(StateProxy, index);
-            return Task.FromResult(true);
+            var stateValue = await this.StateManager.TryGetStateAsync<ActorState>("MyState");
+            var state = stateValue.Value;
+            state.Index = index;
+            await this.StateManager.SetStateAsync<ActorState>("MyState", state);
         }
 
-        public Task SetTemperatureAsync(double temperature)
+        public async Task SetTemperatureAsync(double temperature)
         {
-            Func<ActorState, double, ActorState> addTemperture = (state, temp) => { state.Temperature = temp; return state; };
-            addTemperture(StateProxy, temperature);
-            return Task.FromResult(true);
+            var stateValue = await this.StateManager.TryGetStateAsync<ActorState>("MyState");
+            var state = stateValue.Value;
+            state.Temperature = temperature;
+            await this.StateManager.SetStateAsync<ActorState>("MyState", state);
         }
 
         /// <summary>
         /// This method is called whenever an actor is activated.
         /// An actor is activated the first time any of its methods are invoked.
         /// </summary>
-        protected override Task OnActivateAsync()
+        protected override async Task OnActivateAsync()
         {
             ActorEventSource.Current.ActorMessage(this, "SensorActor activated.");
-            var state = this.StateManager.TryGetStateAsync<ActorState>("MyState").GetAwaiter().GetResult().Value;
+            var state = await this.StateManager.TryGetStateAsync<ActorState>("MyState");
 
-            if (state == null)
+            if (!state.HasValue)
             {
-                state = new ActorState() { Temperature = 0 };
+                var actorState = new ActorState() { Temperature = 0 };
+                await this.StateManager.SetStateAsync<ActorState>("MyState", actorState);
             }
-            this.StateManager.SetStateAsync<ActorState>("MyState", state);
-            return Task.FromResult(true);
         }
 
     }

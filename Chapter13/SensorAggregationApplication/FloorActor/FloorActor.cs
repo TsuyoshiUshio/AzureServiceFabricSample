@@ -31,39 +31,35 @@ namespace FloorActor
         }  
 
         [ReadOnly(true)]
-        public Task<double> GetTemperatureAsync()
+        public async Task<double> GetTemperatureAsync()
         {
-            Task<double>[] tasks = new Task<double>[1000];
             double[] readings = new double[1000];
-            Parallel.For(0, 1000, i =>
+
+            for(int i  = 0; i < 1000; i++)
             {
                 var proxy = ActorProxy.Create<ISensorActor>
                 (new ActorId(i), "fabric:/SensorAggregationApplication");
-                tasks[i] = proxy.GetTemperatureAsync();
-            });
-            Task.WaitAll(tasks);
-            Parallel.For(0, 1000, i =>
-            {
-                readings[i] = tasks[i].Result;
-            });
-            return Task.FromResult(readings.Average());
+
+                readings[i] = await proxy.GetTemperatureAsync();
+            }
+            
+            return readings.Average();
         }
 
         /// <summary>
         /// This method is called whenever an actor is activated.
         /// An actor is activated the first time any of its methods are invoked.
         /// </summary>
-        protected override Task OnActivateAsync()
+        protected override async Task OnActivateAsync()
         {
             ActorEventSource.Current.ActorMessage(this, "FloorActor activated.");
-            var state = this.StateManager.TryGetStateAsync<ActorState>("MyState").GetAwaiter().GetResult().Value;
+            var state = await this.StateManager.TryGetStateAsync<ActorState>("MyState");
 
-            if (state == null)
+            if (!state.HasValue)
             {
-                state = new ActorState() { Temperature = 0 };
+                var actorState = new ActorState() { Temperature = 0 };
+                await this.StateManager.SetStateAsync<ActorState>("MyState", actorState);
             }
-            this.StateManager.SetStateAsync<ActorState>("MyState", state);
-            return Task.FromResult(true);
         }
 
     }

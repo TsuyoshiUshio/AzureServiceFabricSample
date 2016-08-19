@@ -7,6 +7,11 @@ using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
+using Microsoft.ServiceFabric.Actors;
+using Microsoft.ServiceFabric.Actors.Client;
+using IoTHubPartitionMap.Interfaces;
+using Microsoft.ServiceBus.Messaging;
+using System.Text;
 
 namespace SensorDataProcessor
 {
@@ -38,31 +43,54 @@ namespace SensorDataProcessor
         /// <param name="cancellationToken">Canceled when Service Fabric needs to shut down this service replica.</param>
         protected override async Task RunAsync(CancellationToken cancellationToken)
         {
-            // TODO: Replace the following sample code with your own logic 
-            //       or remove this RunAsync override if it's not needed in your service.
+   
+                ServiceEventSource.Current.ServiceMessage(this, "********** Run Async! ******");
+            DateTime timeStamp = DateTime.Now;
+            var proxy = ActorProxy.Create<IIoTHubPartitionMap>(new ActorId(1) ,
+                    "fabric:/SensorAggregationApplication");
+                var eventHubClient = EventHubClient.CreateFromConnectionString("HostName=iote2e.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=Bsp4+D5at3lTacsNaZPvx0FhVvrdDa8LGFzKS/B6zzQ=", "messages/events");
 
-            var myDictionary = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, long>>("myDictionary");
-
-            while (true)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                using (var tx = this.StateManager.CreateTransaction())
+                while (!cancellationToken.IsCancellationRequested)
                 {
-                    var result = await myDictionary.TryGetValueAsync(tx, "Counter");
+                    string partition = await proxy.LeaseTHubPartitionAsync();
 
-                    ServiceEventSource.Current.ServiceMessage(this, "Current Counter Value: {0}",
-                        result.HasValue ? result.Value.ToString() : "Value does not exist.");
+                if (partition == "")
+                    {
+                        ServiceEventSource.Current.ServiceMessage(this, "********** Partition = '' ******");
+                        await Task.Delay(TimeSpan.FromSeconds(15), cancellationToken);
+                    }
+                    else
+                    {
+                        ServiceEventSource.Current.ServiceMessage(this, "********** coming! Partition ={0} ******", partition);
+                        var eventHubReceiver = eventHubClient.GetDefaultConsumerGroup().CreateReceiver("3", DateTime.UtcNow);
+                        while (!cancellationToken.IsCancellationRequested)
+                        {
+                            EventData eventData = await eventHubReceiver.ReceiveAsync();
 
-                    await myDictionary.AddOrUpdateAsync(tx, "Counter", 0, (key, value) => ++value);
+                        if (eventData != null)
+                        {
+                            ServiceEventSource.Current.ServiceMessage(this, "********** the event data is coming! ******");
+                            string data = Encoding.UTF8.GetString(eventData.GetBytes());
+                            ServiceEventSource.Current.ServiceMessage(this, "Message: {0}", data);
+                            timeStamp = DateTime.Now;
+                        }
+                        else
+                        {
+                            if (DateTime.Now - timeStamp > TimeSpan.FromSeconds(20))
+                            {
+                                ServiceEventSource.Current.ServiceMessage(this, "********** not yet! ******");
+                                  string lease = await proxy.RenewIoTHubPartitionLeaseAsync(partition);
+                                  ServiceEventSource.Current.ServiceMessage(this, "********** lease {0} ******", lease);
+                                if (lease == "")
+                                    break;
+                            }
+                        }
+                        }
 
-                    // If an exception is thrown before calling CommitAsync, the transaction aborts, all changes are 
-                    // discarded, and nothing is saved to the secondary replicas.
-                    await tx.CommitAsync();
+
+                    }
                 }
-
-                await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
-            }
+ 
         }
     }
 }

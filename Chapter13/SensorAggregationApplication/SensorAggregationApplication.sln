@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IoTHubPartitionMap", "IoTHu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IoTHubPartitionMap.Interfaces", "IoTHubPartitionMap.Interfaces\IoTHubPartitionMap.Interfaces.csproj", "{DBED8858-E716-4C92-92F4-194300333630}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestReceiveMessageFromIoTHub", "TestReceiveMessageFromIoTHub\TestReceiveMessageFromIoTHub.csproj", "{0A5040BE-B444-47C4-8873-137F1506E958}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,14 @@ Global
 		{DBED8858-E716-4C92-92F4-194300333630}.Release|Any CPU.ActiveCfg = Release|x64
 		{DBED8858-E716-4C92-92F4-194300333630}.Release|x64.ActiveCfg = Release|x64
 		{DBED8858-E716-4C92-92F4-194300333630}.Release|x64.Build.0 = Release|x64
+		{0A5040BE-B444-47C4-8873-137F1506E958}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A5040BE-B444-47C4-8873-137F1506E958}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A5040BE-B444-47C4-8873-137F1506E958}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0A5040BE-B444-47C4-8873-137F1506E958}.Debug|x64.Build.0 = Debug|Any CPU
+		{0A5040BE-B444-47C4-8873-137F1506E958}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A5040BE-B444-47C4-8873-137F1506E958}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A5040BE-B444-47C4-8873-137F1506E958}.Release|x64.ActiveCfg = Release|Any CPU
+		{0A5040BE-B444-47C4-8873-137F1506E958}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

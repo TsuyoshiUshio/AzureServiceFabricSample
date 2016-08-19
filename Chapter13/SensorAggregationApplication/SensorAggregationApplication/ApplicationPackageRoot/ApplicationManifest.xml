@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="SensorAggregationApplicationType" ApplicationTypeVersion="1.0.4" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+<ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="SensorAggregationApplicationType" ApplicationTypeVersion="1.0.41" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Parameters>
-    <Parameter Name="SensorDataProcessor_MinReplicaSetSize" DefaultValue="3" />
-    <Parameter Name="SensorDataProcessor_PartitionCount" DefaultValue="1" />
+    <Parameter Name="SensorDataProcessor_MinReplicaSetSize" DefaultValue="2" />
+    <Parameter Name="SensorDataProcessor_PartitionCount" DefaultValue="32" />
     <Parameter Name="SensorDataProcessor_TargetReplicaSetSize" DefaultValue="3" />
     <Parameter Name="FloorActorService_PartitionCount" DefaultValue="10" />
     <Parameter Name="FloorActorService_MinReplicaSetSize" DefaultValue="3" />
@@ -10,27 +10,30 @@
     <Parameter Name="SensorActorService_PartitionCount" DefaultValue="10" />
     <Parameter Name="SensorActorService_MinReplicaSetSize" DefaultValue="3" />
     <Parameter Name="SensorActorService_TargetReplicaSetSize" DefaultValue="3" />
+    <Parameter Name="IoTHubPartitionMapActorService_PartitionCount" DefaultValue="10" />
+    <Parameter Name="IoTHubPartitionMapActorService_MinReplicaSetSize" DefaultValue="3" />
+    <Parameter Name="IoTHubPartitionMapActorService_TargetReplicaSetSize" DefaultValue="3" />
   </Parameters>
   <!-- Import the ServiceManifest from the ServicePackage. The ServiceManifestName and ServiceManifestVersion 
        should match the Name and Version attributes of the ServiceManifest element defined in the 
        ServiceManifest.xml file. -->
   <ServiceManifestImport>
-    <ServiceManifestRef ServiceManifestName="IoTHubPartitionMapPkg" ServiceManifestVersion="1.0.0" />
-  </ServiceManifestImport>
-  <ServiceManifestImport>
-    <ServiceManifestRef ServiceManifestName="SensorDataProcessorPkg" ServiceManifestVersion="1.0.0" />
+    <ServiceManifestRef ServiceManifestName="SensorDataProcessorPkg" ServiceManifestVersion="1.0.25" />
     <ConfigOverrides />
   </ServiceManifestImport>
   <ServiceManifestImport>
-    <ServiceManifestRef ServiceManifestName="FloorActorPkg" ServiceManifestVersion="1.0.2" />
+    <ServiceManifestRef ServiceManifestName="FloorActorPkg" ServiceManifestVersion="1.0.3" />
   </ServiceManifestImport>
   <ServiceManifestImport>
-    <ServiceManifestRef ServiceManifestName="SensorActorPkg" ServiceManifestVersion="1.0.3" />
+    <ServiceManifestRef ServiceManifestName="SensorActorPkg" ServiceManifestVersion="1.0.4" />
+  </ServiceManifestImport>
+  <ServiceManifestImport>
+    <ServiceManifestRef ServiceManifestName="IoTHubPartitionMapPkg" ServiceManifestVersion="1.0.16" />
   </ServiceManifestImport>
   <DefaultServices>
     <Service Name="SensorDataProcessor">
       <StatefulService ServiceTypeName="SensorDataProcessorType" TargetReplicaSetSize="[SensorDataProcessor_TargetReplicaSetSize]" MinReplicaSetSize="[SensorDataProcessor_MinReplicaSetSize]">
-        <UniformInt64Partition PartitionCount="[SensorDataProcessor_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
+        <UniformInt64Partition PartitionCount="[SensorDataProcessor_PartitionCount]" LowKey="0" HighKey="31" />
       </StatefulService>
     </Service>
     <Service Name="FloorActorService" GeneratedIdRef="7595a68c-cb20-436b-82a7-d36fc1df1a85|Persisted">
@@ -41,6 +44,11 @@
     <Service Name="SensorActorService" GeneratedIdRef="e13b022d-e519-4255-b598-e87a0a3c9d63|Persisted">
       <StatefulService ServiceTypeName="SensorActorServiceType" TargetReplicaSetSize="[SensorActorService_TargetReplicaSetSize]" MinReplicaSetSize="[SensorActorService_MinReplicaSetSize]">
         <UniformInt64Partition PartitionCount="[SensorActorService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
+      </StatefulService>
+    </Service>
+    <Service Name="IoTHubPartitionMapActorService" GeneratedIdRef="4b5f161d-77ca-4258-9148-ca16a385676a|Persisted">
+      <StatefulService ServiceTypeName="IoTHubPartitionMapActorServiceType" TargetReplicaSetSize="[IoTHubPartitionMapActorService_TargetReplicaSetSize]" MinReplicaSetSize="[IoTHubPartitionMapActorService_MinReplicaSetSize]">
+        <UniformInt64Partition PartitionCount="[IoTHubPartitionMapActorService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
       </StatefulService>
     </Service>
     <!-- The section below creates instances of service types, when an instance of this 
