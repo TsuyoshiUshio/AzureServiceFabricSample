@@ -1,6 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="SensorAggregationApplicationType" ApplicationTypeVersion="1.0.4" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Parameters>
+    <Parameter Name="SensorDataProcessor_MinReplicaSetSize" DefaultValue="3" />
+    <Parameter Name="SensorDataProcessor_PartitionCount" DefaultValue="1" />
+    <Parameter Name="SensorDataProcessor_TargetReplicaSetSize" DefaultValue="3" />
     <Parameter Name="FloorActorService_PartitionCount" DefaultValue="10" />
     <Parameter Name="FloorActorService_MinReplicaSetSize" DefaultValue="3" />
     <Parameter Name="FloorActorService_TargetReplicaSetSize" DefaultValue="3" />
@@ -12,12 +15,24 @@
        should match the Name and Version attributes of the ServiceManifest element defined in the 
        ServiceManifest.xml file. -->
   <ServiceManifestImport>
+    <ServiceManifestRef ServiceManifestName="IoTHubPartitionMapPkg" ServiceManifestVersion="1.0.0" />
+  </ServiceManifestImport>
+  <ServiceManifestImport>
+    <ServiceManifestRef ServiceManifestName="SensorDataProcessorPkg" ServiceManifestVersion="1.0.0" />
+    <ConfigOverrides />
+  </ServiceManifestImport>
+  <ServiceManifestImport>
     <ServiceManifestRef ServiceManifestName="FloorActorPkg" ServiceManifestVersion="1.0.2" />
   </ServiceManifestImport>
   <ServiceManifestImport>
     <ServiceManifestRef ServiceManifestName="SensorActorPkg" ServiceManifestVersion="1.0.3" />
   </ServiceManifestImport>
   <DefaultServices>
+    <Service Name="SensorDataProcessor">
+      <StatefulService ServiceTypeName="SensorDataProcessorType" TargetReplicaSetSize="[SensorDataProcessor_TargetReplicaSetSize]" MinReplicaSetSize="[SensorDataProcessor_MinReplicaSetSize]">
+        <UniformInt64Partition PartitionCount="[SensorDataProcessor_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
+      </StatefulService>
+    </Service>
     <Service Name="FloorActorService" GeneratedIdRef="7595a68c-cb20-436b-82a7-d36fc1df1a85|Persisted">
       <StatefulService ServiceTypeName="FloorActorServiceType" TargetReplicaSetSize="[FloorActorService_TargetReplicaSetSize]" MinReplicaSetSize="[FloorActorService_MinReplicaSetSize]">
         <UniformInt64Partition PartitionCount="[FloorActorService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />

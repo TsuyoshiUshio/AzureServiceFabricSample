@@ -15,6 +15,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloorActor.Interfaces", "Fl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SensorAggregationTest", "SensorAggregationTest\SensorAggregationTest.csproj", "{6BFD8050-E95D-4312-8DEC-DF414E044E5E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SensorDataProcessor", "SensorDataProcessor\SensorDataProcessor.csproj", "{4D1A2C93-6E1F-4B10-B199-45FB4A1A9F4B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IoTHubPartitionMap", "IoTHubPartitionMap\IoTHubPartitionMap.csproj", "{15C3057C-4FD0-47EE-B5C7-7DBDB6BB8AB3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IoTHubPartitionMap.Interfaces", "IoTHubPartitionMap.Interfaces\IoTHubPartitionMap.Interfaces.csproj", "{DBED8858-E716-4C92-92F4-194300333630}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +69,24 @@ Global
 		{6BFD8050-E95D-4312-8DEC-DF414E044E5E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6BFD8050-E95D-4312-8DEC-DF414E044E5E}.Release|x64.ActiveCfg = Release|Any CPU
 		{6BFD8050-E95D-4312-8DEC-DF414E044E5E}.Release|x64.Build.0 = Release|Any CPU
+		{4D1A2C93-6E1F-4B10-B199-45FB4A1A9F4B}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{4D1A2C93-6E1F-4B10-B199-45FB4A1A9F4B}.Debug|x64.ActiveCfg = Debug|x64
+		{4D1A2C93-6E1F-4B10-B199-45FB4A1A9F4B}.Debug|x64.Build.0 = Debug|x64
+		{4D1A2C93-6E1F-4B10-B199-45FB4A1A9F4B}.Release|Any CPU.ActiveCfg = Release|x64
+		{4D1A2C93-6E1F-4B10-B199-45FB4A1A9F4B}.Release|x64.ActiveCfg = Release|x64
+		{4D1A2C93-6E1F-4B10-B199-45FB4A1A9F4B}.Release|x64.Build.0 = Release|x64
+		{15C3057C-4FD0-47EE-B5C7-7DBDB6BB8AB3}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{15C3057C-4FD0-47EE-B5C7-7DBDB6BB8AB3}.Debug|x64.ActiveCfg = Debug|x64
+		{15C3057C-4FD0-47EE-B5C7-7DBDB6BB8AB3}.Debug|x64.Build.0 = Debug|x64
+		{15C3057C-4FD0-47EE-B5C7-7DBDB6BB8AB3}.Release|Any CPU.ActiveCfg = Release|x64
+		{15C3057C-4FD0-47EE-B5C7-7DBDB6BB8AB3}.Release|x64.ActiveCfg = Release|x64
+		{15C3057C-4FD0-47EE-B5C7-7DBDB6BB8AB3}.Release|x64.Build.0 = Release|x64
+		{DBED8858-E716-4C92-92F4-194300333630}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{DBED8858-E716-4C92-92F4-194300333630}.Debug|x64.ActiveCfg = Debug|x64
+		{DBED8858-E716-4C92-92F4-194300333630}.Debug|x64.Build.0 = Debug|x64
+		{DBED8858-E716-4C92-92F4-194300333630}.Release|Any CPU.ActiveCfg = Release|x64
+		{DBED8858-E716-4C92-92F4-194300333630}.Release|x64.ActiveCfg = Release|x64
+		{DBED8858-E716-4C92-92F4-194300333630}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
