@@ -43,54 +43,52 @@ namespace SensorDataProcessor
         /// <param name="cancellationToken">Canceled when Service Fabric needs to shut down this service replica.</param>
         protected override async Task RunAsync(CancellationToken cancellationToken)
         {
-   
-                ServiceEventSource.Current.ServiceMessage(this, "********** Run Async! ******");
+
+            ServiceEventSource.Current.ServiceMessage(this, "********** Run Async! ******");
             DateTime timeStamp = DateTime.Now;
-            var proxy = ActorProxy.Create<IIoTHubPartitionMap>(new ActorId(1) ,
+            var proxy = ActorProxy.Create<IIoTHubPartitionMap>(new ActorId(1),
                     "fabric:/SensorAggregationApplication");
-                var eventHubClient = EventHubClient.CreateFromConnectionString("HostName=iote2e.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=Bsp4+D5at3lTacsNaZPvx0FhVvrdDa8LGFzKS/B6zzQ=", "messages/events");
+            var eventHubClient = EventHubClient.CreateFromConnectionString("HostName=iote2e.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=Bsp4+D5at3lTacsNaZPvx0FhVvrdDa8LGFzKS/B6zzQ=", "messages/events");
 
-                while (!cancellationToken.IsCancellationRequested)
-                {
-                    string partition = await proxy.LeaseTHubPartitionAsync();
-
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                string partition = await proxy.LeaseTHubPartitionAsync();
+                timeStamp = DateTime.Now;
                 if (partition == "")
+                {
+                    ServiceEventSource.Current.ServiceMessage(this, "********** Partition = '' ******");
+                    await Task.Delay(TimeSpan.FromSeconds(15), cancellationToken);
+                }
+                else
+                {
+                    ServiceEventSource.Current.ServiceMessage(this, "********** coming! Partition ={0} ******", partition);
+                    var eventHubReceiver = eventHubClient.GetDefaultConsumerGroup().CreateReceiver(partition, DateTime.UtcNow);
+                    while (!cancellationToken.IsCancellationRequested)
                     {
-                        ServiceEventSource.Current.ServiceMessage(this, "********** Partition = '' ******");
-                        await Task.Delay(TimeSpan.FromSeconds(15), cancellationToken);
-                    }
-                    else
-                    {
-                        ServiceEventSource.Current.ServiceMessage(this, "********** coming! Partition ={0} ******", partition);
-                        var eventHubReceiver = eventHubClient.GetDefaultConsumerGroup().CreateReceiver("3", DateTime.UtcNow);
-                        while (!cancellationToken.IsCancellationRequested)
-                        {
-                            EventData eventData = await eventHubReceiver.ReceiveAsync();
+                        EventData eventData = await eventHubReceiver.ReceiveAsync();
 
                         if (eventData != null)
                         {
                             ServiceEventSource.Current.ServiceMessage(this, "********** the event data is coming! ******");
                             string data = Encoding.UTF8.GetString(eventData.GetBytes());
                             ServiceEventSource.Current.ServiceMessage(this, "Message: {0}", data);
-                            timeStamp = DateTime.Now;
+
+                            string lease = await proxy.RenewIoTHubPartitionLeaseAsync(partition);
+                            if (DateTime.Now - timeStamp >= TimeSpan.FromSeconds(180)) break;
                         }
                         else
                         {
+
                             if (DateTime.Now - timeStamp > TimeSpan.FromSeconds(20))
                             {
-                                ServiceEventSource.Current.ServiceMessage(this, "********** not yet! ******");
-                                  string lease = await proxy.RenewIoTHubPartitionLeaseAsync(partition);
-                                  ServiceEventSource.Current.ServiceMessage(this, "********** lease {0} ******", lease);
-                                if (lease == "")
-                                    break;
+                                ServiceEventSource.Current.ServiceMessage(this, "********** break! ******");
+                                break;
                             }
                         }
-                        }
-
-
                     }
                 }
- 
+            }
+
         }
     }
 }

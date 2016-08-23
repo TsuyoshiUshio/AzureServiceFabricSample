@@ -55,6 +55,15 @@ namespace IoTHubPartitionMap
         {
             string ret = "";
             var state = await this.StateManager.GetStateAsync<ActorState>("MyState");
+
+            // Add following line
+            if (state.PartitionLeases.Count() == state.PartitionNames.Count())
+            {
+                var myList = state.PartitionLeases.ToList();
+                myList.Sort((pair1, pair2) => pair1.Value.CompareTo(pair2.Value));
+                state.PartitionLeases.Remove(myList.First().Key);
+            }
+
             foreach (string partition in state.PartitionNames)
             {
                 ActorEventSource.Current.ActorMessage(this, "********** LeaseTHub: {0}******", partition);
@@ -138,8 +147,11 @@ namespace IoTHubPartitionMap
             List<string> keys = stateProxy.PartitionLeases.Keys.ToList();
             foreach (string key in keys)
             {
-                if (DateTime.Now - stateProxy.PartitionLeases[key] >= TimeSpan.FromSeconds(60))
+                if (DateTime.Now - stateProxy.PartitionLeases[key] >= TimeSpan.FromSeconds(210))
+                {
+                    ActorEventSource.Current.ActorMessage(this, "********** Fire CheckLease! : Remove This {0}******", key);
                     stateProxy.PartitionLeases.Remove(key);
+                }
 
             }
             await this.StateManager.SetStateAsync<ActorState>("MyState", stateProxy);
