@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="ActorTicTacToeApplicationType" ApplicationTypeVersion="1.0.1" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+<ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="ActorTicTacToeApplicationType" ApplicationTypeVersion="1.0.2" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Parameters>
     <Parameter Name="GameActorService_PartitionCount" DefaultValue="10" />
     <Parameter Name="GameActorService_MinReplicaSetSize" DefaultValue="3" />
@@ -12,7 +12,7 @@
        should match the Name and Version attributes of the ServiceManifest element defined in the 
        ServiceManifest.xml file. -->
   <ServiceManifestImport>
-    <ServiceManifestRef ServiceManifestName="GamePkg" ServiceManifestVersion="1.0.1" />
+    <ServiceManifestRef ServiceManifestName="GamePkg" ServiceManifestVersion="1.0.2" />
   </ServiceManifestImport>
   <ServiceManifestImport>
     <ServiceManifestRef ServiceManifestName="PlayerPkg" ServiceManifestVersion="1.0.0" />

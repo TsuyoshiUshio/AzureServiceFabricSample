@@ -43,9 +43,9 @@ namespace SensorDataProcessor
         /// <param name="cancellationToken">Canceled when Service Fabric needs to shut down this service replica.</param>
         protected override async Task RunAsync(CancellationToken cancellationToken)
         {
-
+            
             ServiceEventSource.Current.ServiceMessage(this, "********** Run Async! ******");
-            DateTime timeStamp = DateTime.Now;
+            var timeStamp = DateTime.UtcNow;
             var proxy = ActorProxy.Create<IIoTHubPartitionMap>(new ActorId(1),
                     "fabric:/SensorAggregationApplication");
             var eventHubClient = EventHubClient.CreateFromConnectionString("HostName=iote2e.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=Bsp4+D5at3lTacsNaZPvx0FhVvrdDa8LGFzKS/B6zzQ=", "messages/events");
@@ -53,7 +53,7 @@ namespace SensorDataProcessor
             while (!cancellationToken.IsCancellationRequested)
             {
                 string partition = await proxy.LeaseTHubPartitionAsync();
-                timeStamp = DateTime.Now;
+                timeStamp = DateTime.UtcNow;
                 if (partition == "")
                 {
                     ServiceEventSource.Current.ServiceMessage(this, "********** Partition = '' ******");
@@ -70,16 +70,16 @@ namespace SensorDataProcessor
                         if (eventData != null)
                         {
                             ServiceEventSource.Current.ServiceMessage(this, "********** the event data is coming! ******");
-                            string data = Encoding.UTF8.GetString(eventData.GetBytes());
+                            var data = Encoding.UTF8.GetString(eventData.GetBytes());
                             ServiceEventSource.Current.ServiceMessage(this, "Message: {0}", data);
 
                             string lease = await proxy.RenewIoTHubPartitionLeaseAsync(partition);
-                            if (DateTime.Now - timeStamp >= TimeSpan.FromSeconds(180)) break;
+                            if (DateTime.UtcNow - timeStamp >= TimeSpan.FromSeconds(180)) break;
                         }
                         else
                         {
 
-                            if (DateTime.Now - timeStamp > TimeSpan.FromSeconds(20))
+                            if (DateTime.UtcNow - timeStamp > TimeSpan.FromSeconds(20))
                             {
                                 ServiceEventSource.Current.ServiceMessage(this, "********** break! ******");
                                 break;
