@@ -7,6 +7,7 @@ using Game.Interfaces;
 using System.Runtime.Serialization;
 using Microsoft.ServiceFabric.Data;
 using System.ComponentModel;
+using Microsoft.ServiceFabric.Actors;
 
 namespace Game
 {
@@ -22,6 +23,12 @@ namespace Game
     internal class Game : Actor, IGame
     {
         private static readonly string STATE_KEY = "MyState";
+
+        public Game(ActorService actorService, ActorId actorId) : base(actorService, actorId)
+        {
+
+        }
+
         [DataContract]
         public class ActorState
         {

@@ -22,7 +22,7 @@ namespace Player
                 // For more information, see http://aka.ms/servicefabricactorsplatform
 
                 ActorRuntime.RegisterActorAsync<Player>(
-                   (context, actorType) => new ActorService(context, actorType, () => new Player())).GetAwaiter().GetResult();
+                   (context, actorType) => new ActorService(context, actorType)).GetAwaiter().GetResult();
 
                 Thread.Sleep(Timeout.Infinite);
             }

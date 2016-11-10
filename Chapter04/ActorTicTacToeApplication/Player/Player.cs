@@ -22,6 +22,10 @@ namespace Player
     [StatePersistence(StatePersistence.None)]
     internal class Player : Actor, IPlayer
     {
+        public Player(ActorService actorService, ActorId actorId) : base(actorService, actorId)
+        {
+        }
+
         public Task<bool> JoinGameAsync(ActorId gameId, string playerName)
         {
             var game = ActorProxy.Create<IGame>(gameId, "fabric:/ActorTicTacToeApplication");
